@@ -1,0 +1,17 @@
+#!/bin/bash
+set -ex
+juju-log $JUJU_REMOTE_UNIT modified its settings
+juju-log Relation settings:
+relation-get
+juju-log Relation members:
+relation-list
+
+if ! docker network info juju
+then
+  docker network create -d overlay juju
+fi
+service_name=${JUJU_UNIT_NAME//[\.\/]/-}.juju
+if ! docker service info ${service_name}
+then
+  docker service publish ${service_name}
+fi

@@ -1,0 +1,10 @@
+#!/bin/bash
+set -ex
+
+release=$(uname -r)
+
+apt-get -qq update
+apt-get install -y wget linux-image-extra-${release}
+
+wget -qO- https://experimental.docker.com/ | sh
+usermod -aG docker ubuntu

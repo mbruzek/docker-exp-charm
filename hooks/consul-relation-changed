@@ -1,0 +1,27 @@
+#!/bin/bash
+set -ex
+juju-log $JUJU_REMOTE_UNIT modified its settings
+juju-log Relation settings:
+relation-get
+juju-log Relation members:
+relation-list
+
+docker_configuration=/etc/default/docker
+
+consul_address=$(relation-get private-address)
+consul_port=$(relation-get port)
+if [ -z $consul_address ] || [ -z $consul_port ]
+then
+  juju-log "Consul information incomplete ${consul_address}:${consul_port}"
+  exit 0
+fi
+kv_store="--kv-store=consul:${consul_address}:${consul_port}"
+bind_interface="--label=com.docker.network.driver.overlay.bind_interface=eth0"
+if grep -e "^DOCKER_OPTS" $docker_configuration
+then
+  sed -i.original "s/^DOCKER_OPTS=.*$/DOCKER_OPTS=\"${kv_store} ${bind_interface}\"/" $docker_configuration
+else
+  echo DOCKER_OPTS=\"${kv_store} ${bind_interface}\" >> $docker_configuration
+fi
+
+service docker restart

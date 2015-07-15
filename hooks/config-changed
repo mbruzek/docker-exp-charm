@@ -1,0 +1,5 @@
+#!/bin/bash
+set -ex
+
+juju-log configuration changed
+config-get
