@@ -1,0 +1,15 @@
+name: docker-exp
+summary: |
+  Docker Experimental provides the cutting edge features that have not been released in Docker.
+maintainer: Matt Bruzek <mbruzek@gmail.com>
+description: |
+  Exprerimental features in docker are avaiable in this charm.
+tags:
+  - containers
+subordinate: false
+requires:
+  consul:
+    interface: consul
+peers:
+  network:
+    interface: overlay
